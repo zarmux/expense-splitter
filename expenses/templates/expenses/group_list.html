@@ -1,0 +1,8 @@
+<h1>Your groups</h1>
+<ul>
+  {% for group in groups %}
+    <li><a href="{% url 'group_detail' group.pk %}">{{ group.name }}</a></li>
+  {% empty %}
+    <li>No groups yet. Create one in the <a href="/admin/">admin panel</a>.</li>
+  {% endfor %}
+</ul>
