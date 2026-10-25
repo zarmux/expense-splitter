@@ -1,0 +1,7 @@
+{% extends "expenses/base.html" %}
+{% block title %}{{ person.username }} · Friends{% endblock %}
+{% block content %}
+<a class="back" href="{% url 'friends' %}">← Friends</a>
+<header class="page-intro"><p class="eyebrow">YOUR FRIEND</p><h1>Profile</h1><p class="page-subtitle">A little about the person you share expenses with.</p></header>
+<section class="profile-view panel"><span class="profile-avatar">{% include "expenses/_avatar.html" with u=person size="lg" %}</span><div><span class="tag mint-tag">Connected</span><h2>{{ person.username }}</h2><p>This is the public profile information available to friends. Contact details and payment identifiers are not shown here.</p></div></section>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "expenses/base.html" %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+<div class="auth-wrap"><div class="card auth-card">
+  {% if first_time %}
+    <div class="auth-icon">👋</div>
+    <h1>Set up your profile</h1>
+    <p class="muted">Pick a username and a photo. Friends find you by your username.</p>
+  {% else %}
+    {% include "expenses/_avatar.html" with u=user size="lg" %}
+    <h1>{{ user.username }}</h1>
+    <p class="muted">{{ user.email }}</p>
+    <div class="stats">
+      <div class="stat"><span class="stat-label">Groups</span><span class="stat-value">{{ stats.groups }}</span></div>
+      <div class="stat"><span class="stat-label">Friends</span><span class="stat-value">{{ stats.friends }}</span></div>
+      <div class="stat"><span class="stat-label">Paid</span><span class="stat-value">₹{{ stats.paid }}</span></div>
+    </div>
+  {% endif %}
+  <form method="post" enctype="multipart/form-data">{% csrf_token %}{{ form.as_p }}<button>{% if first_time %}Continue{% else %}Save changes{% endif %}</button></form>
+</div></div>
+{% endblock %}

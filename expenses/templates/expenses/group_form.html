@@ -1,0 +1,8 @@
+{% extends "expenses/base.html" %}
+{% block title %}New group{% endblock %}
+{% block content %}
+<a class="back" href="{% url 'group_list' %}">← All groups</a>
+<h1>New group</h1>
+<form method="post" class="card">{% csrf_token %}{{ form.as_p }}<button>Create group</button></form>
+<p class="muted">Only friends can be added. <a href="{% url 'friends' %}">Find friends</a></p>
+{% endblock %}

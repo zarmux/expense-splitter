@@ -1,0 +1,1 @@
+<form method="post" action="{% url 'settle' %}" class="settle-form">{% csrf_token %}<input type="hidden" name="user" value="{{ p.pk }}"><button class="settle-btn" type="submit">{{ label }}</button></form>

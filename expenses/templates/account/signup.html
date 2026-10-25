@@ -1,0 +1,4 @@
+{% extends "expenses/auth.html" %}
+{% block heading %}Create your account{% endblock %}
+{% block action %}Sign up{% endblock %}
+{% block switch %}<p class="muted">Have an account? <a href="{% url 'account_login' %}">Log in</a></p>{% endblock %}

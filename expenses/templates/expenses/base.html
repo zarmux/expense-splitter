@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0F3D3A">
+  <title>{% block title %}Expense Splitter{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'expenses/css/style.css' %}?v=preview-match-2">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Main navigation">
+      <a class="brand" href="{% url 'home' %}"><span class="logo" aria-hidden="true">₹</span><span>Expense Splitter<span class="brand-dot">.</span></span></a>
+      {% if user.is_authenticated %}
+        <p class="nav-label">YOUR SPACE</p>
+        <nav class="primary-nav">
+          <a class="nav-link{% if request.resolver_match.url_name == 'home' %} active{% endif %}" href="{% url 'home' %}"><span class="nav-icon" aria-hidden="true">◫</span>Dashboard</a>
+          <a class="nav-link{% if request.resolver_match.url_name == 'group_list' or request.resolver_match.url_name == 'group_detail' or request.resolver_match.url_name == 'group_create' or request.resolver_match.url_name == 'group_delete' %} active{% endif %}" href="{% url 'group_list' %}"><span class="nav-icon" aria-hidden="true">▤</span>Groups</a>
+          <a class="nav-link{% if request.resolver_match.url_name == 'friends' or request.resolver_match.url_name == 'friend_profile' %} active{% endif %}" href="{% url 'friends' %}"><span class="nav-icon" aria-hidden="true">♧</span>Friends</a>
+          <a class="nav-link{% if request.resolver_match.url_name == 'history' %} active{% endif %}" href="{% url 'history' %}"><span class="nav-icon" aria-hidden="true">◷</span>History</a>
+        </nav>
+        <div class="sidebar-spacer"></div>
+        <div class="sidebar-account">
+          <a class="account-link{% if request.resolver_match.url_name == 'profile' or request.resolver_match.url_name == 'welcome' %} active{% endif %}" href="{% url 'profile' %}">{% include "expenses/_avatar.html" with u=user size="sm" %}<span class="account-name">{{ user.username }}</span><span class="account-hint">Profile</span></a>
+          {% if user.is_staff %}<a class="nav-link" href="/admin/"><span class="nav-icon" aria-hidden="true">⚙</span>Admin</a>{% endif %}
+          <form method="post" action="{% url 'account_logout' %}" class="logout-form">{% csrf_token %}<button class="nav-link logout-button" type="submit"><span class="nav-icon" aria-hidden="true">↪</span>Log out</button></form>
+        </div>
+        <div class="mobile-account"><a href="{% url 'profile' %}">Profile</a><form method="post" action="{% url 'account_logout' %}">{% csrf_token %}<button class="mobile-logout-btn" type="submit">Log out</button></form></div>
+      {% else %}
+        <p class="nav-label">YOUR ACCOUNT</p>
+        <nav class="primary-nav"><a class="nav-link" href="{% url 'account_login' %}"><span class="nav-icon" aria-hidden="true">↪</span>Log in</a><a class="nav-link" href="{% url 'account_signup' %}"><span class="nav-icon" aria-hidden="true">＋</span>Sign up</a></nav>
+        <div class="sidebar-spacer"></div>
+      {% endif %}
+    </aside>
+    <div class="app-main">
+      <main class="container">
+        {% if messages %}<div class="messages" role="status" aria-live="polite">{% for message in messages %}<div class="message {{ message.tags }}">{{ message }}</div>{% endfor %}</div>{% endif %}
+        {% block content %}{% endblock %}
+      </main>
+      <footer class="app-footer">Expense Splitter <span aria-hidden="true">·</span> Shared spending, made clearer</footer>
+    </div>
+  </div>
+</body>
+</html>

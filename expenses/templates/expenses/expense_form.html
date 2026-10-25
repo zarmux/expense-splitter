@@ -1,0 +1,42 @@
+{% extends "expenses/base.html" %}
+{% block title %}Groups · Expense Splitter{% endblock %}
+{% block content %}
+<header class="page-intro page-intro-row">
+  <div>
+    <p class="eyebrow">YOUR SHARED SPACES</p>
+    <h1>Groups</h1>
+    <p class="page-subtitle">Trips, home bills and plans—each has its own place.</p>
+  </div>
+  <a class="btn primary" href="{% url 'group_create' %}"><span aria-hidden="true">＋</span> New group</a>
+</header>
+<div class="group-grid">
+  {% for group in groups %}
+    <article class="card group-card group-tile">
+      <div class="group-tile-head">
+        <span class="group-avatar" aria-hidden="true">{{ group.name|first|upper }}</span>
+        {% if group.created_by_id == user.id %}<span class="group-role">Created by you</span>{% else %}<span class="group-role">Member</span>{% endif %}
+      </div>
+      <h2>{{ group.name }}</h2>
+      <p class="group-summary">{{ group.n_members }} member{{ group.n_members|pluralize }} <span aria-hidden="true">·</span> {{ group.n_expenses }} expense{{ group.n_expenses|pluralize }}</p>
+      <div class="group-actions">
+        <a class="text-link" href="{% url 'group_detail' group.pk %}">Open group <span aria-hidden="true">→</span></a>
+        {% if group.created_by_id == user.id %}
+          <form method="post" action="{% url 'group_delete' group.pk %}" onsubmit="return confirm('Delete this group, its expenses and splits? This cannot be undone. Account-wide settlements are not linked to groups and will remain; your dashboard balance may change.');">
+            {% csrf_token %}
+            <button class="text-danger" type="submit" aria-label="Delete {{ group.name }}">Delete</button>
+          </form>
+        {% else %}
+          <span class="owner-label">Creator manages deletion</span>
+        {% endif %}
+      </div>
+    </article>
+  {% empty %}
+    <section class="empty-groups">
+      <span class="empty-illustration" aria-hidden="true">＋</span>
+      <h2>Your groups start here</h2>
+      <p>Create a space for a trip, shared home or dinner plan, then add friends and expenses.</p>
+      <a class="btn primary" href="{% url 'group_create' %}">Create your first group</a>
+    </section>
+  {% endfor %}
+</div>
+{% endblock %}

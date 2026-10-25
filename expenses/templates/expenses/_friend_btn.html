@@ -1,0 +1,1 @@
+<form method="post" class="inline">{% csrf_token %}<input type="hidden" name="user" value="{{ p.pk }}"><input type="hidden" name="action" value="{{ action }}"><button>{{ label }}</button></form>

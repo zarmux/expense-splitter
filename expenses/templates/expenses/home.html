@@ -1,0 +1,37 @@
+{% extends "expenses/base.html" %}
+{% block title %}Dashboard · Expense Splitter{% endblock %}
+{% block content %}
+<header class="dashboard-header">
+  <div><p class="eyebrow">YOUR OVERVIEW</p><h1>Dashboard</h1><p class="page-subtitle">A little clarity for all the things you share.</p></div>
+  <a class="btn primary" href="{% url 'quick_expense' %}"><span aria-hidden="true">＋</span> Add expense</a>
+</header>
+
+<section class="welcome-band" aria-label="Expense splitter introduction">
+  <div><p class="welcome-kicker">SHARED, NOT COMPLICATED</p><h2>Good plans are better when everyone’s in sync.</h2><p>Keep groups, expenses and paybacks together.</p></div>
+  <span class="welcome-spark" aria-hidden="true"><i></i><i></i><i></i></span>
+</section>
+
+<section class="overview-cards" aria-label="Your current balances">
+  <article class="overview-card receivable-card"><div class="overview-icon" aria-hidden="true">↙</div><div class="overview-copy"><span class="stat-label">You are owed</span><strong class="stat-value">₹{{ total_get|floatformat:2 }}</strong></div></article>
+  <article class="overview-card payable-card"><div class="overview-icon" aria-hidden="true">↗</div><div class="overview-copy"><span class="stat-label">You owe</span><strong class="stat-value">₹{{ total_give|floatformat:2 }}</strong></div></article>
+</section>
+
+<div class="dashboard-grid">
+  <section class="panel activity-panel">
+    <div class="section-heading"><div><h2>Recent activity</h2><p class="section-caption">Latest expenses from your groups</p></div><a class="text-link" href="{% url 'history' %}">View history <span aria-hidden="true">→</span></a></div>
+    <ul class="activity-list">
+      {% for e in recent %}<li class="activity-item"><span class="activity-mark" aria-hidden="true">₹</span><span class="activity-details"><strong>{{ e.description }}</strong><small>{{ e.group.name }} <span aria-hidden="true">·</span> {% if e.paid_by_id == user.id %}paid by you{% else %}paid by {{ e.paid_by.username }}{% endif %}</small></span><span class="activity-amount">₹{{ e.amount|floatformat:2 }}<small>{{ e.created_at|date:"d M Y" }}</small></span></li>
+      {% empty %}<li class="empty-state"><span class="empty-mark" aria-hidden="true">＋</span><strong>No expenses yet</strong><span>Create a group or add an expense to get started.</span><a class="text-link" href="{% url 'group_create' %}">Create your first group →</a></li>{% endfor %}
+    </ul>
+  </section>
+  <aside class="dashboard-aside" aria-label="Balances and shortcuts">
+    <section class="panel balance-panel">
+      <div class="section-heading"><div><h2>Balances</h2><p class="section-caption">Settle up with friends</p></div><span class="panel-symbol" aria-hidden="true">↔</span></div>
+      {% if to_get %}<h3 class="balance-group-title">Coming your way</h3><ul class="balance-list">{% for person, amount in to_get %}<li class="balance-row"><span class="balance-person">{% include "expenses/_avatar.html" with u=person size="sm" %}<span>{{ person.username }}</span></span><span class="balance-row-end"><strong class="positive-text">+₹{{ amount|floatformat:2 }}</strong>{% include "expenses/_settle_btn.html" with p=person label="Received" %}</span></li>{% endfor %}</ul>{% endif %}
+      {% if to_give %}<h3 class="balance-group-title">You need to pay</h3><ul class="balance-list">{% for person, amount in to_give %}<li class="balance-row"><span class="balance-person">{% include "expenses/_avatar.html" with u=person size="sm" %}<span>{{ person.username }}</span></span><span class="balance-row-end"><strong class="negative-text">−₹{{ amount|floatformat:2 }}</strong>{% if person.profile.upi_id %}<a class="mini-action" href="{% url 'pay' person.pk %}">Pay</a>{% endif %}{% include "expenses/_settle_btn.html" with p=person label="Paid" %}</span></li>{% endfor %}</ul>{% endif %}
+      {% if not to_get and not to_give %}<div class="settled-state"><span class="settled-check" aria-hidden="true">✓</span><strong>All settled up</strong><span>You’re all square with your friends.</span></div>{% endif %}
+    </section>
+    <section class="quick-card"><span class="quick-kicker">QUICK ACTION</span><h2>Add an expense</h2><p>Choose a group, enter the details, and let the app split it.</p><a class="btn coral-btn" href="{% url 'quick_expense' %}">Open expense form <span aria-hidden="true">→</span></a></section>
+  </aside>
+</div>
+{% endblock %}

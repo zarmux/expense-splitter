@@ -1,0 +1,10 @@
+{% extends "expenses/base.html" %}
+{% block title %}Pay {{ other.username }} · Expense Splitter{% endblock %}
+{% block content %}
+<a class="back" href="{% url 'home' %}">← Dashboard</a>
+<header class="page-intro"><p class="eyebrow">SETTLE UP</p><h1>Pay {{ other.username }}</h1><p class="page-subtitle">Confirm the amount in your UPI app before sending.</p></header>
+<section class="pay-card panel"><div class="pay-amount"><span class="stat-label">Amount due</span><strong>₹{{ amount|floatformat:2 }}</strong><small>Payment is processed by your UPI app, not by Expense Splitter.</small></div>
+  {% if upi_valid %}<div class="payment-ready"><img class="payment-qr" src="{{ qr }}" alt="UPI QR code for paying {{ other.username }} ₹{{ amount|floatformat:2 }}"><div><span class="tag">UPI ID verified for format</span><p>Scan with a UPI app, or open the payment link on your phone.</p><a class="btn primary" href="{{ upi_uri }}">Open UPI app</a><p class="payee-line">Payee: <strong>{{ other.username }}</strong><br>UPI ID: <code>{{ upi_id }}</code></p></div></div>{% else %}<div class="payment-warning"><h2>No valid UPI ID saved</h2><p>{{ other.username }} hasn’t added a UPI ID in the expected format. Ask them to update their profile, or settle another way.</p></div>{% endif %}
+</section>
+<p class="payment-disclaimer">This page prepares payment details only. Check the payee and final amount inside your payment app; recording a payment in Expense Splitter is a separate action.</p>
+{% endblock %}

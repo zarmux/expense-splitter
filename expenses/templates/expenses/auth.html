@@ -1,0 +1,13 @@
+{% extends "expenses/base.html" %}
+{% load socialaccount %}
+{% block content %}
+<div class="auth-wrap"><div class="card auth-card">
+  <div class="auth-icon">₹</div>
+  <h1>{% block heading %}{% endblock %}</h1>
+  {% get_providers as providers %}
+  {% for provider in providers %}<form method="post" action="{% provider_login_url provider %}" class="social-login-form">{% csrf_token %}<button class="btn" type="submit">Continue with {{ provider.name }}</button></form>{% endfor %}
+  {% if providers %}<p class="muted divider">or use email</p>{% endif %}
+  <form method="post">{% csrf_token %}{{ form.as_p }}{{ redirect_field }}<button>{% block action %}{% endblock %}</button></form>
+  {% block switch %}{% endblock %}
+</div></div>
+{% endblock %}

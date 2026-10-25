@@ -1,0 +1,21 @@
+{% extends "expenses/base.html" %}
+{% block title %}Friends · Expense Splitter{% endblock %}
+{% block content %}
+<header class="page-intro"><div><p class="eyebrow">PEOPLE YOU SHARE WITH</p><h1>Friends</h1><p class="page-subtitle">Find people, manage requests and open a friend’s profile.</p></div></header>
+<div class="friends-layout">
+  <section class="panel search-panel">
+    <div class="section-heading"><div><h2>Find people</h2><p class="section-caption">Search by username</p></div><span class="panel-symbol coral-symbol" aria-hidden="true">⌕</span></div>
+    <form method="get" class="people-search" role="search"><label class="sr-only" for="friend-search">Search by username</label><span class="search-icon" aria-hidden="true">⌕</span><input id="friend-search" name="q" value="{{ q }}" placeholder="Search username" autocomplete="off"><button class="btn small primary" type="submit">Search</button></form>
+    {% if q %}<ul class="people-results">{% for p in results %}<li class="person-row"><span class="person-main">{% include "expenses/_avatar.html" with u=p size="sm" %}<span><strong>{{ p.username }}</strong><small>Ready to connect</small></span></span>{% include "expenses/_friend_btn.html" with p=p action="add" label="Add friend" %}</li>{% empty %}<li class="empty-inline">No people found for “{{ q }}”. Try another username.</li>{% endfor %}</ul>{% else %}<p class="search-hint">Type a username to find someone to split expenses with.</p>{% endif %}
+  </section>
+
+  <section class="panel friends-panel">
+    <div class="section-heading"><div><h2>Your friends</h2><p class="section-caption">Accepted connections</p></div><span class="count-pill">{{ friends|length }}</span></div>
+    <ul class="people-results">{% for p in friends %}<li class="person-row"><a class="person-main person-profile-link" href="{% url 'friend_profile' p.pk %}">{% include "expenses/_avatar.html" with u=p size="sm" %}<span><strong>{{ p.username }}</strong><small>View basic profile</small></span></a><span class="person-actions"><a class="text-link" href="{% url 'friend_profile' p.pk %}">Profile</a>{% include "expenses/_friend_btn.html" with p=p action="remove" label="Remove" %}</span></li>{% empty %}<li class="empty-inline">No friends yet. Search for someone to send your first request.</li>{% endfor %}</ul>
+
+    {% if incoming %}<div class="request-section"><h3><span class="request-dot incoming-dot"></span>Incoming requests <span class="count-pill">{{ incoming|length }}</span></h3><ul class="people-results">{% for r in incoming %}<li class="person-row"><span class="person-main">{% include "expenses/_avatar.html" with u=r.from_user size="sm" %}<span><strong>{{ r.from_user.username }}</strong><small>Wants to connect</small></span></span>{% include "expenses/_friend_btn.html" with p=r.from_user action="accept" label="Accept" %}</li>{% endfor %}</ul></div>{% endif %}
+
+    {% if outgoing %}<div class="request-section"><h3><span class="request-dot outgoing-dot"></span>Sent requests <span class="count-pill muted-pill">{{ outgoing|length }}</span></h3><ul class="people-results">{% for r in outgoing %}<li class="person-row"><span class="person-main">{% include "expenses/_avatar.html" with u=r.to_user size="sm" %}<span><strong>{{ r.to_user.username }}</strong><small>Waiting for a response</small></span></span>{% include "expenses/_friend_btn.html" with p=r.to_user action="cancel" label="Cancel" %}</li>{% endfor %}</ul></div>{% endif %}
+  </section>
+</div>
+{% endblock %}

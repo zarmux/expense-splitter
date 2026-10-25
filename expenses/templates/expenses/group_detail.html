@@ -1,29 +1,10 @@
-<a href="{% url 'group_list' %}">← All groups</a>
-<h1>{{ group.name }}</h1>
-
-<h2>Balances</h2>
-<ul>
-  {% for user, amount in balances.items %}
-    <li>{{ user.username }}:
-      {% if amount > 0 %}gets back ₹{{ amount }}
-      {% elif amount < 0 %}owes ₹{{ amount }}
-      {% else %}is settled up{% endif %}
-    </li>
-  {% endfor %}
-</ul>
-
-<h2>Add expense</h2>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Add (split equally)</button>
-</form>
-
-<h2>Expenses</h2>
-<ul>
-  {% for expense in expenses %}
-    <li>{{ expense.description }} · ₹{{ expense.amount }} · paid by {{ expense.paid_by.username }}</li>
-  {% empty %}
-    <li>No expenses yet.</li>
-  {% endfor %}
-</ul>
+{% extends "expenses/base.html" %}
+{% block title %}{{ group.name }} · Expense Splitter{% endblock %}
+{% block content %}
+<a class="back" href="{% url 'group_list' %}">← All groups</a>
+<header class="page-intro page-intro-row"><div><p class="eyebrow">GROUP DETAILS</p><h1>{{ group.name }}</h1><div class="chips">{% for member in members %}<span class="chip">{% include "expenses/_avatar.html" with u=member size="sm" %}{{ member.username }}</span>{% endfor %}</div></div><a class="btn coral-btn" href="{% url 'quick_expense' %}?group={{ group.pk }}">＋ Add expense</a></header>
+<div class="stats"><div class="stat"><span class="stat-label">Total spent</span><span class="stat-value">₹{{ total|floatformat:2 }}</span></div><div class="stat"><span class="stat-label">Expenses</span><span class="stat-value">{{ expenses|length }}</span></div><div class="stat"><span class="stat-label">Members</span><span class="stat-value">{{ members|length }}</span></div></div>
+<section class="panel group-balances"><div class="section-heading"><div><h2>Group balances</h2><p class="section-caption">Before settlements recorded across all groups</p></div><span class="panel-symbol" aria-hidden="true">↔</span></div><p class="balance-explainer">The dashboard nets payments across your whole account. These figures show each group’s expense split before those overall settlements.</p><ul class="list">{% for person, amount in balances.items %}<li><span class="who">{% include "expenses/_avatar.html" with u=person size="sm" %}{{ person.username }}</span>{% if amount > 0 %}<span class="badge positive">gets back ₹{{ amount|floatformat:2 }}</span>{% elif amount < 0 %}<span class="badge negative">owes ₹{{ amount|cut:"-" }}</span>{% else %}<span class="badge neutral">settled up</span>{% endif %}</li>{% endfor %}</ul></section>
+<section class="panel"><div class="section-heading"><div><h2>Add an expense to {{ group.name }}</h2><p class="section-caption">Split equally across the group members</p></div></div><form method="post" class="expense-inline-form">{% csrf_token %}{{ form.as_p }}<button class="btn primary" type="submit">Add expense</button></form></section>
+<section class="panel"><div class="section-heading"><div><h2>Expenses</h2><p class="section-caption">Shared spending in this group</p></div></div><ul class="list">{% for expense in expenses %}<li><span><strong>{{ expense.description }}</strong><small class="muted">paid by {{ expense.paid_by.username }} · {{ expense.created_at|date:"d M Y" }}</small></span><span class="amount">₹{{ expense.amount|floatformat:2 }}</span></li>{% empty %}<li class="muted">No expenses yet. Add the first one above.</li>{% endfor %}</ul></section>
+{% endblock %}

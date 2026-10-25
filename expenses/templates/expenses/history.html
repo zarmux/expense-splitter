@@ -1,0 +1,25 @@
+{% extends "expenses/base.html" %}
+{% block title %}History{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>History</h1>
+  <a class="btn small" href="?export=1">⬇ Export CSV</a>
+</div>
+<section class="card">
+  <ul class="list">
+    {% for e in page %}
+      <li>
+        <span><strong>{{ e.description }}</strong><small class="muted">{{ e.group.name }} · paid by {{ e.paid_by.username }} · {{ e.created_at|date:"d M Y" }}</small></span>
+        <span class="amount">₹{{ e.amount }}<small class="muted">your share ₹{{ e.my_share|default_if_none:0 }}</small></span>
+      </li>
+    {% empty %}<li class="muted">Nothing here yet.</li>{% endfor %}
+  </ul>
+</section>
+{% if page.paginator.num_pages > 1 %}
+<div class="pager">
+  {% if page.has_previous %}<a class="btn small" href="?page={{ page.previous_page_number }}">← Newer</a>{% else %}<span></span>{% endif %}
+  <span class="muted">Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+  {% if page.has_next %}<a class="btn small" href="?page={{ page.next_page_number }}">Older →</a>{% else %}<span></span>{% endif %}
+</div>
+{% endif %}
+{% endblock %}
