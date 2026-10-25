@@ -14,8 +14,6 @@ Split bills with friends, see exactly who owes whom, and settle up in a couple o
 
 <br>
 
-<img src="docs/screenshots/dashboard.png" alt="Expense Splitter dashboard showing what you are owed, what you owe, recent activity and balances" width="900">
-
 </div>
 
 ---
